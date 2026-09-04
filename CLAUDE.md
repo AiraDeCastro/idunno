@@ -61,3 +61,13 @@ Core loop: **Locate → Filter → Spin → Decide.**
 
 - Google Maps Platform caching-terms verification is still outstanding — flag it rather than assuming an answer if a caching TTL needs to be picked.
 - "Open now" filter was raised as a possible v1 addition but isn't committed scope — confirm with the user before adding it.
+
+## Session log
+
+### 2026-09-04
+- Wrote the PRD (v0.2): vision, target users, core flow, features, design principles, and technical approach. Resolved two open items during review — cuisine matching (native `type` where Google has one, keyword fallback where it doesn't, e.g. Filipino/Canadian) and the Places API cost/caching strategy (coarse-grid cache keys, deferred Place Details, TTL pending Google ToS verification) — both are now written into this file.
+- Created this file, PLANNING.md, and TASKS.md from the PRD.
+- Added the Session workflow section above (read PLANNING.md at session start; check, complete, and add to TASKS.md as work happens).
+- Started Milestone 0, task 1 (`git init`, initial commit, remote repo):
+  - Done: `git init`, initial commit containing CLAUDE.md, PLANNING.md, TASKS.md.
+  - Not done: remote repo. User chose GitHub, public. Blocked — GitHub CLI (`gh`) isn't installed; `winget` is available. Waiting on the user to either approve installing `gh` or create the repo manually on github.com and hand back the URL to add as `origin`.
