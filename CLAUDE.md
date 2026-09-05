@@ -57,6 +57,18 @@ Core loop: **Locate → Filter → Spin → Decide.**
 - Places API error/rate limit → friendly retry state, never a raw error or blank screen.
 - Result actions: **Get Directions** (Google Maps deep link), **Spin Again** (new pull from same pool), **Exclude & Respin** (drops this restaurant from the pool for the session).
 
+## Commit standards
+
+- **Every commit message must follow [Conventional Commits](https://www.conventionalcommits.org/)** (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, etc.) — enforced by commitlint via a `commit-msg` hook. A non-conforming message is rejected, not just warned about.
+- **A pre-commit hook (Husky) gates every commit on, in order:**
+  1. `npm run lint` — ESLint, zero warnings tolerated (`--max-warnings=0`)
+  2. `npm audit --audit-level=high` — blocks on high/critical vulnerabilities. Threshold is deliberately `high`, not `moderate`: moderate advisories in dev-tooling transitive deps are extremely common and often unfixable without dropping the tool, so blocking on them would make the gate impossible to satisfy in practice. High/critical is the real bar.
+  3. `npm test` — full Vitest suite
+  4. `npm run build` — full production build (`next build`)
+  Order is cheapest-check-first so a broken commit fails fast rather than waiting through a full build first.
+- **If tests don't exist yet for something the hook needs to pass, write them — don't weaken the gate.** The hook assumes a real test suite exists; skipping or stubbing it defeats the point.
+- Don't loosen the audit threshold, drop a gate step, or downgrade a pinned dependency to make a commit pass — fix the actual lint/test/build/vulnerability, or ask the user if the gate itself seems wrong.
+
 ## Open items to flag if touched
 
 - Google Maps Platform caching-terms verification is still outstanding — flag it rather than assuming an answer if a caching TTL needs to be picked.
@@ -68,6 +80,11 @@ Core loop: **Locate → Filter → Spin → Decide.**
 - Wrote the PRD (v0.2): vision, target users, core flow, features, design principles, and technical approach. Resolved two open items during review — cuisine matching (native `type` where Google has one, keyword fallback where it doesn't, e.g. Filipino/Canadian) and the Places API cost/caching strategy (coarse-grid cache keys, deferred Place Details, TTL pending Google ToS verification) — both are now written into this file.
 - Created this file, PLANNING.md, and TASKS.md from the PRD.
 - Added the Session workflow section above (read PLANNING.md at session start; check, complete, and add to TASKS.md as work happens).
-- Started Milestone 0, task 1 (`git init`, initial commit, remote repo):
-  - Done: `git init`, initial commit containing CLAUDE.md, PLANNING.md, TASKS.md.
-  - Not done: remote repo. User chose GitHub, public. Blocked — GitHub CLI (`gh`) isn't installed; `winget` is available. Waiting on the user to either approve installing `gh` or create the repo manually on github.com and hand back the URL to add as `origin`.
+- Completed Milestone 0, task 1 (`git init`, initial commit, remote repo): installed `gh` via winget, user authenticated it themselves, then created the public repo and pushed — [github.com/AiraDeCastro/idunno](https://github.com/AiraDeCastro/idunno). Marked done in TASKS.md.
+- Scaffolded the Next.js app (Milestone 0, task 2) to have something real for tooling to check, then implemented the pre-commit standards the user asked for: Husky pre-commit hook (lint → audit → test → build) and commitlint enforcing Conventional Commits. Added the Commit standards section above.
+  - Had to correct course twice on version choices, both documented in PLANNING.md: started on Next 14 as the "safe stable" pick, but `npm audit` showed the whole Next 9–16.3.0 range carries unpatched high/critical CVEs — moved to Next 16.3.4 (patched), which pulled in React 19 and ESLint 9 flat config.
+  - Tried bumping ESLint to the newer 10.x line to clear a deprecation notice; reverted after finding `eslint-config-next@16.3.4`'s bundled plugins only really support ESLint ^9 — npm was overriding a genuine peer conflict, not resolving a compatible one.
+  - `next lint` no longer exists in Next 16 (removed CLI subcommand) — lint script calls `eslint .` directly.
+  - `eslint-config-next` now ships native flat-config arrays (`eslint-config-next/core-web-vitals`) rather than a legacy shareable config — the `FlatCompat` wrapper pattern from older Next versions caused a circular-JSON crash; fixed by importing the flat config directly.
+  - Wrote a real smoke test (`tests/page.test.tsx`) for the home page since no tests existed yet, per the user's "build tests first if none exist" instruction.
+  - Verified all four gates pass (lint, audit at 0 vulnerabilities, tests, build) before wiring them into the hook.

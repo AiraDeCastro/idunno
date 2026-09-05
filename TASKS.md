@@ -6,8 +6,11 @@ Build order for the MVP defined in the PRD, grounded in the stack/architecture i
 
 Goal: an empty app that deploys, with every external account it'll need already provisioned.
 
-- [ ] `git init`, initial commit, remote repo
-- [ ] Scaffold Next.js app with Tailwind CSS
+- [x] `git init`, initial commit, remote repo — [github.com/AiraDeCastro/idunno](https://github.com/AiraDeCastro/idunno) (public)
+- [x] Scaffold Next.js app with Tailwind CSS — Next.js 16.3.4 (App Router, TypeScript), Tailwind CSS 3, ESLint 9 flat config
+- [x] Set up pre-commit hooks via Husky: lint → `npm audit --audit-level=high` → tests → production build, in that order (fail fast on the cheapest check first)
+- [x] Enforce Conventional Commits via commitlint (`commit-msg` hook)
+- [x] Add a test runner (Vitest + React Testing Library) since none existed yet, with a real smoke test for the home page
 - [ ] Connect repo to Vercel for preview deploys
 - [ ] Create Google Cloud project; enable Places API (New) + Geocoding API; generate an API key restricted by HTTP referrer/IP
 - [ ] Provision Upstash Redis (or Vercel KV) instance

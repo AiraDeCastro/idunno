@@ -51,6 +51,10 @@ Success looks like people spinning more than once per session, actually tapping 
 | External data | Google Places API (Nearby Search, Place Details), Google Geocoding API | Source of restaurant data, ratings, price, and manual-location fallback per the PRD. |
 | Hosting | Vercel | Pairs directly with Next.js + edge functions + KV; minimal deploy config. |
 | Analytics | Plausible or PostHog (lightweight, privacy-respecting) | Needed to actually track the PRD's success metrics — spins/session, Get Directions rate, 7-day return, cuisine spread — nothing here is derivable from Places data alone. |
+| Testing | Vitest + React Testing Library, jsdom environment | Fast, native ESM, pairs cleanly with Vite-based tooling; no reason to reach for Jest's extra config surface at this scope. |
+| Git hooks / commit standard | Husky + commitlint (`@commitlint/config-conventional`) | Enforces Conventional Commits and gates every commit on lint, security audit, tests, and a production build — see CLAUDE.md's Commit standards section for the exact gate order and rationale. |
+
+Pinned versions as of the initial scaffold (2026-09-04): **Next.js 16.3.4, React 19, ESLint 9.39.5.** These aren't arbitrary — Next.js versions below 16.3.4 carry multiple unpatched high/critical CVEs (RSC DoS, cache poisoning, request smuggling), so anything older fails the security gate outright. ESLint is pinned to 9.x rather than the newer 10.x because `eslint-config-next@16.3.4`'s own bundled plugins (`eslint-plugin-react`, `-jsx-a11y`, `-import`) only support ESLint up to ^9 — installing 10 "resolves" via npm overriding a real peer conflict, not genuine compatibility. Don't bump either without checking whether upstream has actually caught up.
 
 This is a concrete starting recommendation, not a locked contract — revisit if a constraint surfaces that argues otherwise, but don't re-litigate it without a reason.
 

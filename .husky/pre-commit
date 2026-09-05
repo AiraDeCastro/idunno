@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+set -e
+
+echo "1/4  Linting..."
+npm run lint
+
+echo "2/4  Checking for security vulnerabilities..."
+npm audit --audit-level=high
+
+echo "3/4  Running tests..."
+npm test
+
+echo "4/4  Verifying production build..."
+npm run build
+
+echo "All pre-commit checks passed."
