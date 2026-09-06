@@ -14,21 +14,21 @@ Goal: an empty app that deploys, with every external account it'll need already 
 - [ ] Connect repo to Vercel for preview deploys
 - [ ] Create Google Cloud project; enable Places API (New) + Geocoding API; generate an API key restricted by HTTP referrer/IP
 - [ ] Provision Upstash Redis (or Vercel KV) instance
-- [ ] Establish `.env.local` convention; document required env vars in the README
+- [x] Establish `.env.local` convention; document required env vars in the README — `.env.local.example` + README.md's Setup table; `GOOGLE_MAPS_API_KEY` documented but not yet provisioned (blocked on the Google Cloud project task above)
 - [ ] Set up analytics provider (Plausible or PostHog) skeleton, even with no events yet
 
 ## Milestone 1 — Location & filters
 
 Goal: user can tell the app where they are and what they want, with no restaurant data involved yet.
 
-- [ ] Geolocation API request flow, with permission-rationale copy shown before the prompt
-- [ ] Manual address/zip fallback via Geocoding API for denied/unavailable location
-- [ ] Persist last-used location for the session (not account-tied)
-- [ ] Cuisine multi-select filter (chips), default: all selected
-- [ ] Price multi-select filter ($–$$$$), default: all selected
-- [ ] Radius slider with mi/km toggle, default 5 mi
-- [ ] Minimum-rating toggle, default 3.5★ and up
-- [ ] Central filter state (Context) that the data layer can read from
+- [x] Geolocation API request flow, with permission-rationale copy shown before the prompt — `useGeolocation` hook + `LocationGate`
+- [x] Manual address/zip fallback via Geocoding API for denied/unavailable location — `/api/geocode` route + `ManualLocationForm` (route is real; untestable end-to-end until `GOOGLE_MAPS_API_KEY` is provisioned)
+- [x] Persist last-used location for the session (not account-tied) — `sessionStorage` via `LocationContext`, read with `useSyncExternalStore`
+- [x] Cuisine multi-select filter (chips), default: all selected
+- [x] Price multi-select filter ($–$$$$), default: all selected
+- [x] Radius slider with mi/km toggle, default 5 mi
+- [x] Minimum-rating toggle, default 3.5★ and up
+- [x] Central filter state (Context) that the data layer can read from — `FiltersContext`
 
 ## Milestone 2 — Places data layer & caching
 
